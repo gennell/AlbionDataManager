@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="albiondataModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="gold_prices">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="created_at" Type="timestamp" Precision="0" />
+          <Property Name="updated_at" Type="timestamp" Precision="0" />
+          <Property Name="deleted_at" Type="timestamp" Precision="0" />
+          <Property Name="timestamp" Type="timestamp" Precision="0" />
+          <Property Name="price" Type="int" />
+        </EntityType>
+        <EntityType Name="market_orders">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="albion_id" Type="uint" Nullable="false" />
+          <Property Name="item_id" Type="varchar" MaxLength="255" />
+          <Property Name="quality_level" Type="tinyint" />
+          <Property Name="enchantment_level" Type="tinyint" />
+          <Property Name="price" Type="int" />
+          <Property Name="initial_amount" Type="int" />
+          <Property Name="amount" Type="int" />
+          <Property Name="auction_type" Type="varchar" MaxLength="255" />
+          <Property Name="expires" Type="timestamp" Precision="0" />
+          <Property Name="location" Type="int" Nullable="false" />
+          <Property Name="id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="created_at" Type="timestamp" Precision="0" />
+          <Property Name="updated_at" Type="timestamp" Precision="0" />
+          <Property Name="deleted_at" Type="timestamp" Precision="0" />
+        </EntityType>
+        <EntityContainer Name="albiondataModelStoreContainer">
+          <EntitySet Name="gold_prices" EntityType="Self.gold_prices" Schema="albiondata" store:Type="Tables" />
+          <EntitySet Name="market_orders" EntityType="Self.market_orders" Schema="albiondata" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="albiondataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="gold_prices">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="created_at" Type="DateTime" />
+          <Property Name="updated_at" Type="DateTime" />
+          <Property Name="deleted_at" Type="DateTime" />
+          <Property Name="timestamp" Type="DateTime" />
+          <Property Name="price" Type="Int32" />
+        </EntityType>
+        <EntityType Name="market_orders">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="albion_id" Type="Int64" Nullable="false" />
+          <Property Name="item_id" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="quality_level" Type="SByte" />
+          <Property Name="enchantment_level" Type="SByte" />
+          <Property Name="price" Type="Int32" />
+          <Property Name="initial_amount" Type="Int32" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="auction_type" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="expires" Type="DateTime" />
+          <Property Name="location" Type="Int32" Nullable="false" />
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="created_at" Type="DateTime" />
+          <Property Name="updated_at" Type="DateTime" />
+          <Property Name="deleted_at" Type="DateTime" />
+        </EntityType>
+        <EntityContainer Name="albiondataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="gold_prices" EntityType="Self.gold_prices" />
+          <EntitySet Name="market_orders" EntityType="Self.market_orders" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="albiondataModelStoreContainer" CdmEntityContainer="albiondataEntities">
+          <EntitySetMapping Name="gold_prices">
+            <EntityTypeMapping TypeName="albiondataModel.gold_prices">
+              <MappingFragment StoreEntitySet="gold_prices">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="timestamp" ColumnName="timestamp" />
+                <ScalarProperty Name="price" ColumnName="price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="market_orders">
+            <EntityTypeMapping TypeName="albiondataModel.market_orders">
+              <MappingFragment StoreEntitySet="market_orders">
+                <ScalarProperty Name="albion_id" ColumnName="albion_id" />
+                <ScalarProperty Name="item_id" ColumnName="item_id" />
+                <ScalarProperty Name="quality_level" ColumnName="quality_level" />
+                <ScalarProperty Name="enchantment_level" ColumnName="enchantment_level" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="initial_amount" ColumnName="initial_amount" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="auction_type" ColumnName="auction_type" />
+                <ScalarProperty Name="expires" ColumnName="expires" />
+                <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
