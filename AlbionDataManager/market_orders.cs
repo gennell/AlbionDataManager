@@ -18,7 +18,7 @@ namespace AlbionDataManager
         public string item_id { get; set; }
         public Nullable<sbyte> quality_level { get; set; }
         public Nullable<sbyte> enchantment_level { get; set; }
-        public Nullable<int> price { get; set; }
+        public Nullable<long> price { get; set; }
         public Nullable<int> initial_amount { get; set; }
         public Nullable<int> amount { get; set; }
         public string auction_type { get; set; }

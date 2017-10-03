@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="albiondataModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="albiondataModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="gold_prices">
           <Key>
             <PropertyRef Name="id" />
@@ -16,6 +16,26 @@
           <Property Name="timestamp" Type="timestamp" Precision="0" />
           <Property Name="price" Type="int" />
         </EntityType>
+        <EntityType Name="groups">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="parent_group" Type="uint" />
+        </EntityType>
+        <EntityType Name="items">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="codename" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="group_id" Type="uint" Nullable="false" />
+          <Property Name="tier" Type="uint" Nullable="false" />
+          <Property Name="quality" Type="uint" />
+          <Property Name="level" Type="uint" />
+        </EntityType>
         <EntityType Name="market_orders">
           <Key>
             <PropertyRef Name="id" />
@@ -24,7 +44,7 @@
           <Property Name="item_id" Type="varchar" MaxLength="255" />
           <Property Name="quality_level" Type="tinyint" />
           <Property Name="enchantment_level" Type="tinyint" />
-          <Property Name="price" Type="int" />
+          <Property Name="price" Type="bigint" />
           <Property Name="initial_amount" Type="int" />
           <Property Name="amount" Type="int" />
           <Property Name="auction_type" Type="varchar" MaxLength="255" />
@@ -35,15 +55,127 @@
           <Property Name="updated_at" Type="timestamp" Precision="0" />
           <Property Name="deleted_at" Type="timestamp" Precision="0" />
         </EntityType>
+        <EntityType Name="market_stats">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="item_id" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="location" Type="int" Nullable="false" />
+          <Property Name="price_min" Type="int" />
+          <Property Name="price_max" Type="int" />
+          <Property Name="price_avg" Type="decimal" Precision="10" Scale="0" />
+          <Property Name="timestamp" Type="timestamp" Precision="0" />
+        </EntityType>
+        <EntityType Name="recipes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="item_id" Type="uint" Nullable="false" />
+          <Property Name="amount" Type="uint" Nullable="false" />
+          <Property Name="crafted_item_id" Type="uint" Nullable="false" />
+        </EntityType>
+        <Association Name="fgn_crafted_item_id">
+          <End Role="items" Type="Self.items" Multiplicity="1" />
+          <End Role="recipes" Type="Self.recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="items">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="recipes">
+              <PropertyRef Name="crafted_item_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fgn_group">
+          <End Role="groups" Type="Self.groups" Multiplicity="1" />
+          <End Role="items" Type="Self.items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="groups">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="items">
+              <PropertyRef Name="group_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fgn_item_id">
+          <End Role="items" Type="Self.items" Multiplicity="1" />
+          <End Role="recipes" Type="Self.recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="items">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="recipes">
+              <PropertyRef Name="item_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fgn_parent">
+          <End Role="groups" Type="Self.groups" Multiplicity="0..1" />
+          <End Role="groups1" Type="Self.groups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="groups">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="groups1">
+              <PropertyRef Name="parent_group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="albiondataModelStoreContainer">
           <EntitySet Name="gold_prices" EntityType="Self.gold_prices" Schema="albiondata" store:Type="Tables" />
+          <EntitySet Name="groups" EntityType="Self.groups" Schema="albiondata" store:Type="Tables" />
+          <EntitySet Name="items" EntityType="Self.items" Schema="albiondata" store:Type="Tables" />
           <EntitySet Name="market_orders" EntityType="Self.market_orders" Schema="albiondata" store:Type="Tables" />
+          <EntitySet Name="market_stats" EntityType="Self.market_stats" Schema="albiondata" store:Type="Tables" />
+          <EntitySet Name="recipes" EntityType="Self.recipes" Schema="albiondata" store:Type="Tables" />
+          <AssociationSet Name="fgn_crafted_item_id" Association="Self.fgn_crafted_item_id">
+            <End Role="items" EntitySet="items" />
+            <End Role="recipes" EntitySet="recipes" />
+          </AssociationSet>
+          <AssociationSet Name="fgn_group" Association="Self.fgn_group">
+            <End Role="groups" EntitySet="groups" />
+            <End Role="items" EntitySet="items" />
+          </AssociationSet>
+          <AssociationSet Name="fgn_item_id" Association="Self.fgn_item_id">
+            <End Role="items" EntitySet="items" />
+            <End Role="recipes" EntitySet="recipes" />
+          </AssociationSet>
+          <AssociationSet Name="fgn_parent" Association="Self.fgn_parent">
+            <End Role="groups" EntitySet="groups" />
+            <End Role="groups1" EntitySet="groups" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="albiondataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="albiondataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="gold_prices" EntityType="albiondataModel.gold_prices" />
+          <EntitySet Name="groups" EntityType="albiondataModel.groups" />
+          <EntitySet Name="items" EntityType="albiondataModel.items" />
+          <EntitySet Name="market_orders" EntityType="albiondataModel.market_orders" />
+          <EntitySet Name="market_stats" EntityType="albiondataModel.market_stats" />
+          <AssociationSet Name="fgn_group" Association="albiondataModel.fgn_group">
+            <End Role="groups" EntitySet="groups" />
+            <End Role="items" EntitySet="items" />
+          </AssociationSet>
+          <AssociationSet Name="fgn_parent" Association="albiondataModel.fgn_parent">
+            <End Role="groups" EntitySet="groups" />
+            <End Role="groups1" EntitySet="groups" />
+          </AssociationSet>
+          <EntitySet Name="recipes" EntityType="albiondataModel.recipes" />
+          <AssociationSet Name="fgn_crafted_item_id" Association="albiondataModel.fgn_crafted_item_id">
+            <End Role="items" EntitySet="items" />
+            <End Role="recipes" EntitySet="recipes" />
+          </AssociationSet>
+          <AssociationSet Name="fgn_item_id" Association="albiondataModel.fgn_item_id">
+            <End Role="items" EntitySet="items" />
+            <End Role="recipes" EntitySet="recipes" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="gold_prices">
           <Key>
             <PropertyRef Name="id" />
@@ -55,6 +187,32 @@
           <Property Name="timestamp" Type="DateTime" />
           <Property Name="price" Type="Int32" />
         </EntityType>
+        <EntityType Name="groups">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="parent_group" Type="Int64" />
+          <NavigationProperty Name="items" Relationship="albiondataModel.fgn_group" FromRole="groups" ToRole="items" />
+          <NavigationProperty Name="groups1" Relationship="albiondataModel.fgn_parent" FromRole="groups" ToRole="groups1" />
+          <NavigationProperty Name="groups2" Relationship="albiondataModel.fgn_parent" FromRole="groups1" ToRole="groups" />
+        </EntityType>
+        <EntityType Name="items">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="codename" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="group_id" Type="Int64" Nullable="false" />
+          <Property Name="tier" Type="Int64" Nullable="false" />
+          <Property Name="quality" Type="Int64" />
+          <Property Name="level" Type="Int64" />
+          <NavigationProperty Name="groups" Relationship="albiondataModel.fgn_group" FromRole="items" ToRole="groups" />
+          <NavigationProperty Name="recipes" Relationship="albiondataModel.fgn_crafted_item_id" FromRole="items" ToRole="recipes" />
+          <NavigationProperty Name="recipes1" Relationship="albiondataModel.fgn_item_id" FromRole="items" ToRole="recipes" />
+        </EntityType>
         <EntityType Name="market_orders">
           <Key>
             <PropertyRef Name="id" />
@@ -63,7 +221,7 @@
           <Property Name="item_id" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="quality_level" Type="SByte" />
           <Property Name="enchantment_level" Type="SByte" />
-          <Property Name="price" Type="Int32" />
+          <Property Name="price" Type="Int64" />
           <Property Name="initial_amount" Type="Int32" />
           <Property Name="amount" Type="Int32" />
           <Property Name="auction_type" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -74,10 +232,77 @@
           <Property Name="updated_at" Type="DateTime" />
           <Property Name="deleted_at" Type="DateTime" />
         </EntityType>
-        <EntityContainer Name="albiondataEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="gold_prices" EntityType="Self.gold_prices" />
-          <EntitySet Name="market_orders" EntityType="Self.market_orders" />
-        </EntityContainer>
+        <EntityType Name="market_stats">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="item_id" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="location" Type="Int32" Nullable="false" />
+          <Property Name="price_min" Type="Int32" />
+          <Property Name="price_max" Type="Int32" />
+          <Property Name="price_avg" Type="Decimal" />
+          <Property Name="timestamp" Type="DateTime" />
+        </EntityType>
+        <Association Name="fgn_group">
+          <End Type="albiondataModel.groups" Role="groups" Multiplicity="1" />
+          <End Type="albiondataModel.items" Role="items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="groups">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="items">
+              <PropertyRef Name="group_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fgn_parent">
+          <End Type="albiondataModel.groups" Role="groups" Multiplicity="0..1" />
+          <End Type="albiondataModel.groups" Role="groups1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="groups">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="groups1">
+              <PropertyRef Name="parent_group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="recipes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="item_id" Type="Int64" Nullable="false" />
+          <Property Name="amount" Type="Int64" Nullable="false" />
+          <Property Name="crafted_item_id" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="items" Relationship="albiondataModel.fgn_crafted_item_id" FromRole="recipes" ToRole="items" />
+          <NavigationProperty Name="items1" Relationship="albiondataModel.fgn_item_id" FromRole="recipes" ToRole="items" />
+        </EntityType>
+        <Association Name="fgn_crafted_item_id">
+          <End Type="albiondataModel.items" Role="items" Multiplicity="1" />
+          <End Type="albiondataModel.recipes" Role="recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="items">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="recipes">
+              <PropertyRef Name="crafted_item_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fgn_item_id">
+          <End Type="albiondataModel.items" Role="items" Multiplicity="1" />
+          <End Type="albiondataModel.recipes" Role="recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="items">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="recipes">
+              <PropertyRef Name="item_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -87,32 +312,77 @@
           <EntitySetMapping Name="gold_prices">
             <EntityTypeMapping TypeName="albiondataModel.gold_prices">
               <MappingFragment StoreEntitySet="gold_prices">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="timestamp" ColumnName="timestamp" />
                 <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="timestamp" ColumnName="timestamp" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="groups">
+            <EntityTypeMapping TypeName="albiondataModel.groups">
+              <MappingFragment StoreEntitySet="groups">
+                <ScalarProperty Name="parent_group" ColumnName="parent_group" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="items">
+            <EntityTypeMapping TypeName="albiondataModel.items">
+              <MappingFragment StoreEntitySet="items">
+                <ScalarProperty Name="level" ColumnName="level" />
+                <ScalarProperty Name="quality" ColumnName="quality" />
+                <ScalarProperty Name="tier" ColumnName="tier" />
+                <ScalarProperty Name="group_id" ColumnName="group_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="codename" ColumnName="codename" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="market_orders">
             <EntityTypeMapping TypeName="albiondataModel.market_orders">
               <MappingFragment StoreEntitySet="market_orders">
-                <ScalarProperty Name="albion_id" ColumnName="albion_id" />
-                <ScalarProperty Name="item_id" ColumnName="item_id" />
-                <ScalarProperty Name="quality_level" ColumnName="quality_level" />
-                <ScalarProperty Name="enchantment_level" ColumnName="enchantment_level" />
-                <ScalarProperty Name="price" ColumnName="price" />
-                <ScalarProperty Name="initial_amount" ColumnName="initial_amount" />
-                <ScalarProperty Name="amount" ColumnName="amount" />
-                <ScalarProperty Name="auction_type" ColumnName="auction_type" />
-                <ScalarProperty Name="expires" ColumnName="expires" />
-                <ScalarProperty Name="location" ColumnName="location" />
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="expires" ColumnName="expires" />
+                <ScalarProperty Name="auction_type" ColumnName="auction_type" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="initial_amount" ColumnName="initial_amount" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="enchantment_level" ColumnName="enchantment_level" />
+                <ScalarProperty Name="quality_level" ColumnName="quality_level" />
+                <ScalarProperty Name="item_id" ColumnName="item_id" />
+                <ScalarProperty Name="albion_id" ColumnName="albion_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="market_stats">
+            <EntityTypeMapping TypeName="albiondataModel.market_stats">
+              <MappingFragment StoreEntitySet="market_stats">
+                <ScalarProperty Name="timestamp" ColumnName="timestamp" />
+                <ScalarProperty Name="price_avg" ColumnName="price_avg" />
+                <ScalarProperty Name="price_max" ColumnName="price_max" />
+                <ScalarProperty Name="price_min" ColumnName="price_min" />
+                <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="item_id" ColumnName="item_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="recipes">
+            <EntityTypeMapping TypeName="albiondataModel.recipes">
+              <MappingFragment StoreEntitySet="recipes">
+                <ScalarProperty Name="crafted_item_id" ColumnName="crafted_item_id" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="item_id" ColumnName="item_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

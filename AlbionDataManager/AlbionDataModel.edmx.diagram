@@ -5,8 +5,16 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="de57284efe4e4be89817544888fd1498" Name="Diagram1">
-        <EntityTypeShape EntityType="albiondataModel.gold_prices" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="albiondataModel.market_orders" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="albiondataModel.gold_prices" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="albiondataModel.groups" Width="1.5" PointX="0.75" PointY="1.125" />
+        <EntityTypeShape EntityType="albiondataModel.items" Width="1.5" PointX="3.125" PointY="1.125" />
+        <EntityTypeShape EntityType="albiondataModel.market_orders" Width="1.5" PointX="3.125" PointY="4.75" />
+        <EntityTypeShape EntityType="albiondataModel.market_stats" Width="1.5" PointX="5.625" PointY="4.75" />
+        <AssociationConnector Association="albiondataModel.fgn_group" />
+        <AssociationConnector Association="albiondataModel.fgn_parent" />
+        <EntityTypeShape EntityType="albiondataModel.recipes" Width="1.5" PointX="5.625" PointY="1.125" />
+        <AssociationConnector Association="albiondataModel.fgn_crafted_item_id" />
+        <AssociationConnector Association="albiondataModel.fgn_item_id" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

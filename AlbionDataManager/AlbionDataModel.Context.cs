@@ -26,6 +26,10 @@ namespace AlbionDataManager
         }
     
         public DbSet<gold_prices> gold_prices { get; set; }
+        public DbSet<groups> groups { get; set; }
+        public DbSet<items> items { get; set; }
         public DbSet<market_orders> market_orders { get; set; }
+        public DbSet<market_stats> market_stats { get; set; }
+        public DbSet<recipes> recipes { get; set; }
     }
 }
