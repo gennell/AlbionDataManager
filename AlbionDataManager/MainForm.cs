@@ -10,18 +10,19 @@ using System.Windows.Forms;
 
 namespace AlbionDataManager
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             using (var db = new albiondataEntities())
             {
-                marketordersBindingSource.DataSource = db.market_orders.ToList();
+                marketstatsBindingSource.DataSource = db.market_stats.ToList();
+                //marketordersBindingSource.DataSource = db.market_orders.Take(100).ToList();
             }
         }
     }
